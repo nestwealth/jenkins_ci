@@ -34,9 +34,19 @@ docker run -d --name ci_mongo mongo
 
 # Mysql Docker Setup
 
+To crate the mysql image (OSX only)
+```
+cd mysql
+docker build -t nestwealth/mysql .
+```
+
 To create mysql container:
 ```
-docker run -d --name ci_mysql -e MYSQL_ROOT_PASSWORD=nestwealth -e MYSQL_DATABASE=unittestnw mysql
+docker run -d --name ci_mysql -v [volume_location]:/var/lib/mysql mysql
+```
+Where ```volume_location``` is the location where the volume will be mounted.This is useful so that we can keep the same data whenever we re-create the container (e.g. on update). If running on a mac you'll need to use the new OSX-specific image we created:
+```
+docker run -d --name ci_mysql -v [volume_location]:/var/lib/mysql nestwealth/mysql
 ```
 
 # Key Server Docker Setup
@@ -51,6 +61,7 @@ You'll first need to create the docker image, then the container.
 
 To create the docker image run the following:
 ```
+cd jenkins
 docker build -t nestwealth/jenkins .
 ```
 
@@ -58,6 +69,6 @@ docker build -t nestwealth/jenkins .
 
 To create the docker container run:
 ```
-docker run -d --link ci_mongo --link ci_mysql --link ci_key_server --name ci_jenkins -p 8080:8080 -p 50000:50000 -v [volume_location]:/var/jenkins_home -e JAVA_OPTS="-Duser.timezone=America/Toronto -Dorg.apache.commons.jelly.tags.fmt.timeZone=America/Toronto" nestwealth/jenkins
+docker run -d --link ci_mongo --link ci_mysql --link ci_key_server --name ci_jenkins -p 8080:8080 -p 50000:50000 -v [volume_location]:/var/jenkins_home nestwealth/jenkins
 ```
 where ```volume_location``` is the location of where the volume will be mounted. This is useful so that if we update the image or container we can still use the same Jenkins configuration

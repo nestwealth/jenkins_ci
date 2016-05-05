@@ -12,3 +12,5 @@ RUN npm install -g grunt-cli mocha istanbul
 
 #drop back to jenkins user
 USER jenkins
+
+ENV JAVA_OPTS="-Duser.timezone=America/Toronto -Dorg.apache.commons.jelly.tags.fmt.timeZone=America/Toronto"
